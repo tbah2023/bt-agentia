@@ -3,19 +3,20 @@ package com.example.agentiabtc.agents;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 @Component
-public class AIAgent {
+public class AIAgentRAG {
 
     private final ChatClient chatClient;
 
-    public AIAgent(ChatClient.Builder builder,
-                   ChatMemory memory,
-                   ToolCallbackProvider toolCallbackProvider
+    public AIAgentRAG(ChatClient.Builder builder,
+                      ChatMemory memory,
+                      ToolCallbackProvider toolCallbackProvider
     ) {
         Arrays.stream(toolCallbackProvider.getToolCallbacks()).forEach(toolCallback -> {
             System.out.println("-------------------------------------------");
@@ -49,8 +50,7 @@ public class AIAgent {
                 .build();
     }
 
-    public String askAgent(String query){
-        return chatClient
-                .prompt().user(query).call().content();
+    public String askAgentRAG(Prompt prompt){
+        return chatClient.prompt(prompt).call().content();
     }
 }
