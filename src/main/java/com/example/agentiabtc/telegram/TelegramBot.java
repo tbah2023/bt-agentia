@@ -48,16 +48,31 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update telegramRequest) {
         try {
-            if(!telegramRequest.hasMessage()) return;
+            if (!telegramRequest.hasMessage()) return;
+
             String messageText = telegramRequest.getMessage().getText();
             Long chatId = telegramRequest.getMessage().getChatId();
+
+            // 🔥 CORRECTION ICI
+            if (messageText == null || messageText.trim().isEmpty()) {
+                sendTextMessage(chatId, "Veuillez envoyer un message texte.");
+                return;
+            }
+
             sendTypingQuestion(chatId);
+
             String answer = aiAgent.askAgent(messageText);
-            sendTextMessage(chatId,answer);
-        }catch (TelegramApiException e){
+
+            // sécurité en plus
+            if (answer == null || answer.trim().isEmpty()) {
+                answer = "Je n'ai pas trouvé de réponse.";
+            }
+
+            sendTextMessage(chatId, answer);
+
+        } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
